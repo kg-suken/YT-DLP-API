@@ -5,7 +5,7 @@ $searchQuery = isset($_GET['search']) ? $_GET['search'] : '';
 if (!empty($searchQuery)) {
     $vid = shell_exec('yt-dlp --get-id "ytsearch:'. $searchQuery.'"');
     $vid = preg_replace('/\s+/', '', $vid);
-    $url = '/apps/YouAPhpITube/download.php?vid='.$vid.'&setting='.$setting;
+    $url = '/download.php?vid='.$vid.'&setting='.$setting;
 }
 
 $vid_start = strpos($url, '?vid=');
