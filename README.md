@@ -43,3 +43,6 @@ if (!empty($searchQuery)) {
     $vid = preg_replace('/\s+/', '', $vid);
     $url = '/apps/YouAPhpITube/download.php?vid=' . $vid . '&setting=' . $setting;
 }
+
+
+制作:sskrc
