@@ -46,7 +46,7 @@ if (!empty($searchQuery)) {
     $url = '/apps/YouAPhpITube/download.php?vid=' . $vid . '&setting=' . $setting;
 }
 
-
+```
 
 
 ## 制作
