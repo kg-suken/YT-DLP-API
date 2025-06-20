@@ -64,71 +64,56 @@ $titleStart = strpos($sourceCode, '<title>');
 $titleEnd = strpos($sourceCode, '</title>', $titleStart);
 $title = substr($sourceCode, $titleStart + 7, $titleEnd - $titleStart - 7);
 
+$settings = [
+    'video' => [
+        'cmd' => 'yt-dlp --format mp4 -o ./download/'.$newvid.'.mp4 '.$youtube_url,
+        'file' => './download/'.$newvid.'.mp4',
+        'name' => $title . '.mp4',
+        'type' => 'video/mp4'
+    ],
+    'video-high' => [
+        'cmd' => 'yt-dlp -f bestvideo+bestaudio[ext=m4a] --merge-output-format mp4 -o ./download/'.$newvid.'-high.mp4 '.$youtube_url,
+        'file' => './download/'.$newvid.'-high.mp4',
+        'name' => $title . '-high.mp4',
+        'type' => 'video/mp4'
+    ],
+    'music' => [
+        'cmd' => 'yt-dlp -x --audio-format mp3 -o ./download/'.$newvid.'.mp3 '.$youtube_url,
+        'file' => './download/'.$newvid.'.mp3',
+        'name' => $title . '.mp3',
+        'type' => 'audio/mpeg'
+    ],
+    'music-worst' => [
+        'cmd' => 'yt-dlp -f worstaudio[ext=m4a]/worst[ext=mp3]/worst -o ./download/'.$newvid.'-worst.mp3 '.$youtube_url,
+        'file' => './download/'.$newvid.'-worst.mp3',
+        'name' => $title . '-worst.mp3',
+        'type' => 'audio/mpeg'
+    ],
+    'music-wav' => [
+        'cmd' => 'yt-dlp -f bestaudio[ext=m4a]/bestaudio --extract-audio --audio-format wav -o ./download/'.$newvid.'-best.wav '.$youtube_url,
+        'file' => './download/'.$newvid.'-best.wav',
+        'name' => $title . '-best.wav',
+        'type' => 'audio/wav'
+    ]
+];
 
-
-if(isset($_GET['setting']) && $_GET['setting'] == 'video') {
-$output = shell_exec('yt-dlp --format mp4 -o ./download/'.$newvid.'.mp4 '.$youtube_url);
-$file_url = './download/'.$newvid.'.mp4';
-$file_name = $title . '.mp4';
-header('Content-Description: File Transfer');
-header('Content-Type: video/mp4');
-header('Content-Disposition: attachment; filename="' . rawurlencode($file_name) . '"; filename*=UTF-8\'\'' . rawurlencode($file_name));
-header('Content-Transfer-Encoding: binary');
-header('Expires: 0');
-header('Cache-Control: must-revalidate');
-header('Pragma: public');
-header('Content-Length: ' . filesize($file_url));
-readfile($file_url);
-exit;
+function downloadAndSend($cmd, $file_url, $file_name, $content_type) {
+    shell_exec($cmd);
+    header('Content-Description: File Transfer');
+    header('Content-Type: ' . $content_type);
+    header('Content-Disposition: attachment; filename="' . rawurlencode($file_name) . '"; filename*=UTF-8\'\'' . rawurlencode($file_name));
+    header('Content-Transfer-Encoding: binary');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($file_url));
+    readfile($file_url);
+    exit;
 }
 
-
-if(isset($_GET['setting']) && $_GET['setting'] == 'video-high') {
-$output = shell_exec('yt-dlp -f bestvideo+bestaudio[ext=m4a] --merge-output-format mp4 -o ./download/'.$newvid.'-high.mp4 '.$youtube_url);
-$file_url = './download/'.$newvid.'-high.mp4';
-$file_name = $title . '-high.mp4';
-header('Content-Description: File Transfer');
-header('Content-Type: video/mp4');
-header('Content-Disposition: attachment; filename="' . rawurlencode($file_name) . '"; filename*=UTF-8\'\'' . rawurlencode($file_name));
-header('Content-Transfer-Encoding: binary');
-header('Expires: 0');
-header('Cache-Control: must-revalidate');
-header('Pragma: public');
-header('Content-Length: ' . filesize($file_url));
-readfile($file_url);
-exit;
-}
-
-if(isset($_GET['setting']) && $_GET['setting'] == 'music') {
-$output = shell_exec('yt-dlp -x --audio-format mp3 -o ./download/'.$newvid.'.mp3 '.$youtube_url);	
-$file_url = './download/'.$newvid.'.mp3';
-$file_name = $title . '.mp3';
-header('Content-Description: File Transfer');
-header('Content-Type: audio/mpeg');
-header('Content-Disposition: attachment; filename="' . rawurlencode($file_name) . '"; filename*=UTF-8\'\'' . rawurlencode($file_name));
-header('Content-Transfer-Encoding: binary');
-header('Expires: 0');
-header('Cache-Control: must-revalidate');
-header('Pragma: public');
-header('Content-Length: ' . filesize($file_url));
-readfile($file_url);
-exit;
-}
-
-if(isset($_GET['setting']) && $_GET['setting'] == 'music-worst') {
-$output = shell_exec('yt-dlp -f worstaudio[ext=m4a]/worst[ext=mp3]/worst -o ./download/'.$newvid.'-worst.mp3 '.$youtube_url);	
-$file_url = './download/'.$newvid.'-worst.mp3';
-$file_name = $title . '-worst.mp3';
-header('Content-Description: File Transfer');
-header('Content-Type: audio/mpeg');
-header('Content-Disposition: attachment; filename="' . rawurlencode($file_name) . '"; filename*=UTF-8\'\'' . rawurlencode($file_name));
-header('Content-Transfer-Encoding: binary');
-header('Expires: 0');
-header('Cache-Control: must-revalidate');
-header('Pragma: public');
-header('Content-Length: ' . filesize($file_url));
-readfile($file_url);
-exit;
+if (isset($settings[$setting])) {
+    $s = $settings[$setting];
+    downloadAndSend($s['cmd'], $s['file'], $s['name'], $s['type']);
 }
 
 ?>
